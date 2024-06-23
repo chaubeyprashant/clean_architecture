@@ -1,14 +1,13 @@
-// lib/presentation/screens/home_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:calsoft/presentation/bloc/system_resources/system_resources_bloc.dart';
 import 'package:calsoft/presentation/bloc/system_resources/system_resources_event.dart';
 import 'package:calsoft/presentation/bloc/system_resources/system_resources_state.dart';
-import 'component/cpu_usage_widget.dart';
-import 'component/gpu_usage_widget.dart';
+import 'package:calsoft/presentation/screens/component/cpu_usage_widget.dart';
+import 'package:calsoft/presentation/screens/component/gpu_usage_widget.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -24,27 +23,40 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: BlocBuilder<SystemResourcesBloc, SystemResourcesState>(
-        builder: (context, state) {
-          if (state is SystemResourcesInitial) {
-            return const Center(child: Text('Press the button to fetch data'));
-          } else if (state is SystemResourcesLoading) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (state is SystemResourcesLoaded) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                CPUUsageWidget(cpuUsage: state.systemResource.cpuUsage),
-                const SizedBox(height: 20),
-                const Text('GPU Usage:', style: TextStyle(fontSize: 20)),
-                GPUUsageWidget(gpuUsage: state.systemResource.gpuUsage),
-              ],
+      body: BlocListener<SystemResourcesBloc, SystemResourcesState>(
+        listener: (context, state) {
+          if (state is SystemResourcesError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.message)),
             );
-          } else if (state is SystemResourcesError) {
-            return Center(child: Text(state.message));
           }
-          return Container();
         },
+        child: BlocBuilder<SystemResourcesBloc, SystemResourcesState>(
+          builder: (context, state) {
+            if (state is SystemResourcesInitial) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (state is SystemResourcesLoaded) {
+              List<double> gpuUsageData = state.systemResource.gpuUsage.map((gpu) => gpu.load).toList();
+
+              return Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 20),
+                    CPUUsageWidget(cpuUsageData: state.systemResource.cpuUsageData),
+                    const SizedBox(height: 20),
+                    // const Text('GPU Usage:', style: TextStyle(fontSize: 20)),
+                    GPUUsageWidget(gpuUsageData: gpuUsageData),
+                  ],
+                ),
+              );
+            } else if (state is SystemResourcesError) {
+              return Center(child: Text(state.message));
+            }
+            return Container();
+          },
+        ),
       ),
     );
   }
