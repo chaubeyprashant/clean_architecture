@@ -17,7 +17,7 @@ class GPUUsageWidget extends StatelessWidget {
         .entries
         .map((e) => FlSpot(e.key.toDouble(), e.value))
         .toList()
-        : [FlSpot(0, 0), FlSpot(1, 0)]; // Flat line from (0,0) to (1,0)
+        : [const FlSpot(0, 0), const FlSpot(1, 0)]; // Flat line from (0,0) to (1,0)
 
     return SizedBox(
       height: screenHeight * 0.3,

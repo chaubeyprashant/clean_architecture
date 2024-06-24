@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:calsoft/utils/app_sizes.dart';
 
 class CPUUsageWidget extends StatelessWidget {
   final List<double> cpuUsageData;
@@ -8,10 +9,8 @@ class CPUUsageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
-
     return SizedBox(
-      height: screenHeight * 0.3,
+      height: MediaQuery.of(context).size.height * AppSizes.chartHeightRatio,
       child: LineChart(
         LineChartData(
           minX: 0,
@@ -20,12 +19,12 @@ class CPUUsageWidget extends StatelessWidget {
           maxY: 100,
           titlesData: const FlTitlesData(
             rightTitles: AxisTitles(
-              sideTitles: SideTitles(showTitles: false, interval: 20),
+              sideTitles: SideTitles(showTitles: false),
             ),
             bottomTitles: AxisTitles(
-              sideTitles: SideTitles(showTitles: false, interval: 20),
+              sideTitles: SideTitles(showTitles: false),
             ),
-            topTitles:  AxisTitles(
+            topTitles: AxisTitles(
               sideTitles: SideTitles(showTitles: false),
             ),
           ),
@@ -40,7 +39,7 @@ class CPUUsageWidget extends StatelessWidget {
                   .toList(),
               isCurved: true,
               color: Colors.blue,
-              barWidth: 2,
+              barWidth: AppSizes.lineChartBarWidth,
               isStrokeCapRound: true,
               dotData: const FlDotData(show: false),
               belowBarData: BarAreaData(show: false),
