@@ -10,12 +10,21 @@ class GPUUsageWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
 
+    // If gpuUsageData is empty, create a flat line data
+    final List<FlSpot> gpuDataSpots = gpuUsageData.isNotEmpty
+        ? gpuUsageData
+        .asMap()
+        .entries
+        .map((e) => FlSpot(e.key.toDouble(), e.value))
+        .toList()
+        : [FlSpot(0, 0), FlSpot(1, 0)]; // Flat line from (0,0) to (1,0)
+
     return SizedBox(
       height: screenHeight * 0.3,
       child: LineChart(
         LineChartData(
           minX: 0,
-          maxX: (gpuUsageData.length - 1).toDouble(),
+          maxX: gpuUsageData.isNotEmpty ? (gpuUsageData.length - 1).toDouble() : 1,
           minY: 0,
           maxY: 100,
           titlesData: const FlTitlesData(
@@ -33,11 +42,7 @@ class GPUUsageWidget extends StatelessWidget {
           borderData: FlBorderData(show: true),
           lineBarsData: [
             LineChartBarData(
-              spots: gpuUsageData
-                  .asMap()
-                  .entries
-                  .map((e) => FlSpot(e.key.toDouble(), e.value))
-                  .toList(),
+              spots: gpuDataSpots,
               isCurved: true,
               color: Colors.blue,
               barWidth: 2,
