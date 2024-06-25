@@ -6,7 +6,7 @@ import 'package:calsoft/domain/repositories/system_resource_repository.dart';
 import '../../domain/entities/system_resource.dart';
 
 class SystemResourceRepositoryImpl implements SystemResourceRepository {
-  final String apiUrl = 'http://localhost:5001/system_resources';
+  final String apiUrl = 'https://pyhton-system-resources-1.onrender.com/system_resources';
 
   @override
   Future<SystemResource> getSystemResources() async {
